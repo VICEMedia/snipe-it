@@ -1,0 +1,56 @@
+name: Checkmarx-SAST
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Use the following two lines of code to detect the Github Action Container Public IP
+      #- name: Print Public IP
+      #  run: curl ifconfig.me
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Scan code with Checkmarx
+      - name: Checkmarx CxFlow Action
+      # You may pin to the exact commit or the version.
+      # uses: checkmarx-ts/checkmarx-cxflow-github-action@fe2a395cbbee31268470d92b6c53ebc483005f0f
+        uses: checkmarx-ts/checkmarx-cxflow-github-action@v1.1
+        with:
+          # Select a Checkmarx Project
+          project: snipe-it
+          # Select a Checkmarx Team
+          team: '/CxServer/SP/Company/InfoSec'
+          # Provide Checkmarx URL
+          checkmarx_url: 'https://vicemedia.checkmarx.net'
+          # Provide Checkmarx Username
+          checkmarx_username: ${{ secrets.CHECKMARX_USERNAME }}
+          # Provide Checkmarx Password
+          checkmarx_password: ${{ secrets.CHECKMARX_PASSWORD }}
+          # Provide Checkmarx Client Secret
+          checkmarx_client_secret: ${{ secrets.CHECKMARX_CLIENT_SECRET }}
+          # Vulnerability Scanners (sast, sca, ast, cxgo)
+          scanners: 'sast'
+          # Bug tracker for the scan results.
+          bug_tracker: 'Sarif'
+
+      # Upload SARIF report for CodeQL / Security Alerts Processing
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: cx.sarif
