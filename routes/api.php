@@ -16,6 +16,20 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix' => 'v1','namespace' => 'Api', 'middleware' => 'auth:api'], function () {
 
+
+    Route::get('/', function() {
+
+        return response()->json(
+            [
+                'status' => 'error',
+                'message' => '404 endpoint not found. This is the base URL for the API and does not return anything itself. Please check the API reference at https://snipe-it.readme.io/reference to find a valid API endpoint.',
+                'payload' => null,
+            ], 404);
+    });
+
+
+
+
     Route::group(['prefix' => 'account'], function () {
 
         Route::get('requestable/hardware',
@@ -145,14 +159,13 @@ Route::group(['prefix' => 'v1','namespace' => 'Api', 'middleware' => 'auth:api']
                     'destroy' => 'api.companies.destroy'
                 ],
             'except' => ['create', 'edit'],
-            'parameters' => ['component' => 'component_id']
+            'parameters' => ['company' => 'company_id']
         ]
     ); // Companies resource
 
 
     /*--- Departments API ---*/
 
-    /*--- Suppliers API ---*/
     Route::group(['prefix' => 'departments'], function () {
 
 
@@ -184,6 +197,32 @@ Route::group(['prefix' => 'v1','namespace' => 'Api', 'middleware' => 'auth:api']
 
     /*--- Components API ---*/
 
+    Route::group(['prefix' => 'components'], function () {
+
+        Route::get('{component}/assets',
+            [
+                'as' =>'api.components.assets',
+                'uses' => 'ComponentsController@getAssets',
+            ]
+        );
+
+        Route::post('{component}/checkout',
+            [
+                'as' =>'api.components.checkout',
+                'uses' => 'ComponentsController@checkout',
+            ]
+        );
+
+        Route::post('{component}/checkin',
+        [
+            'as' =>'api.components.checkin',
+            'uses' => 'ComponentsController@checkin',
+        ]
+    );
+
+    }); // Components group
+    
+
     Route::resource('components', 'ComponentsController',
         [
             'names' =>
@@ -199,15 +238,7 @@ Route::group(['prefix' => 'v1','namespace' => 'Api', 'middleware' => 'auth:api']
         ]
     ); // Components resource
 
-    Route::group(['prefix' => 'components'], function () {
-
-        Route::get('{component}/assets',
-            [
-                'as' =>'api.components.assets',
-                'uses' => 'ComponentsController@getAssets',
-            ]
-        );
-    }); // Components group
+   
 
 
     /*--- Consumables API ---*/
@@ -482,11 +513,6 @@ Route::group(['prefix' => 'v1','namespace' => 'Api', 'middleware' => 'auth:api']
     /*--- Licenses API ---*/
 
     Route::group(['prefix' => 'licenses'], function () {
-        Route::get('{licenseId}/seats', [
-            'as' => 'api.license.seats',
-            'uses' => 'LicensesController@seats'
-        ]);
-        
         Route::get('selectlist',
             [
                 'as' => 'api.licenses.selectlist',
@@ -511,7 +537,18 @@ Route::group(['prefix' => 'v1','namespace' => 'Api', 'middleware' => 'auth:api']
         ]
     ); // Licenses resource
 
-
+    Route::resource('licenses.seats', 'LicenseSeatsController',
+        [
+            'names' =>
+                [
+                    'index' => 'api.licenses.seats.index',
+                    'show' => 'api.licenses.seats.show',
+                    'update' => 'api.licenses.seats.update'
+                ],
+            'except' => ['create', 'edit', 'destroy', 'store'],
+            'parameters' => ['licenseseat' => 'licenseseat_id']
+        ]
+    ); // Licenseseats resource
 
     /*--- Locations API ---*/
 
@@ -989,6 +1026,15 @@ Route::group(['prefix' => 'v1','namespace' => 'Api', 'middleware' => 'auth:api']
         );
 
     }); // kits group
+
+    Route::fallback(function(){
+        return response()->json(
+            [
+                'status' => 'error',
+                'message' => '404 endpoint not found. Please check the API reference at https://snipe-it.readme.io/reference to find a valid API endpoint.',
+                'payload' => null,
+            ], 404);
+    });
 
 });
 

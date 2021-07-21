@@ -365,7 +365,6 @@ Form::macro('date_display_format', function ($name = "date_display_format", $sel
 
     $formats = [
         'Y-m-d',
-        'Y-m-d',
         'D M d, Y',
         'M j, Y',
         'd M, Y',
@@ -412,6 +411,25 @@ Form::macro('time_display_format', function ($name = "time_display_format", $sel
 
 });
 
+Form::macro('digit_separator', function ($name = "digit_separator", $selected = null, $class = null) {
+
+    $formats = [
+        '1234.56',
+        '1.234,56',
+    ];
+
+    foreach ($formats as $format) {
+    }
+    $select = '<select name="'.$name.'" class="'.$class.'" style="min-width:120px">';
+    foreach ($formats as $format_inner ) {
+        $select .= '<option value="'.$format_inner.'"'.($selected == $format_inner ? ' selected="selected"' : '').'>'.$format_inner.'</option> ';
+    }
+
+    $select .= '</select>';
+    return $select;
+
+});
+
 /**
 * Barcode macro
 * Generates the dropdown menu of available 1D barcodes
@@ -423,6 +441,11 @@ Form::macro('alt_barcode_types', function ($name = "alt_barcode", $selected = nu
         'C39',
         'PDF417',
         'EAN5',
+        'EAN13',
+        'UPCA',
+        'UPCE',
+
+        
 
     );
 
@@ -513,8 +536,8 @@ Form::macro('customfield_elements', function ($name = "customfield_elements", $s
         'text' => 'Text Box',
         'listbox' => 'List Box',
         'textarea' => 'Textarea (multi-line) ',
-     //   'checkbox' => 'Checkbox',
-     //   'radio' => 'Radio Buttons',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
     );
 
     $select = '<select name="'.$name.'" class="'.$class.'" style="width: 100%" aria-label="'.$name.'">';
@@ -553,6 +576,37 @@ Form::macro('skin', function ($name = "skin", $selected = null, $class = null) {
     $select = '<select name="'.$name.'" class="'.$class.'" style="width: 250px" aria-label="'.$name.'">';
     foreach ($formats as $format => $label) {
         $select .= '<option value="'.$format.'"'.($selected == $format ? ' selected="selected" role="option" aria-selected="true"' : ' aria-selected="false"').'>'.$label.'</option> '."\n";
+    }
+
+    $select .= '</select>';
+    return $select;
+
+});
+
+Form::macro('user_skin', function ($name = "skin", $selected = null, $class = null) {
+
+    $formats = array(
+        '' => 'Site Default',
+        'blue' => 'Default Blue',
+        'blue-dark' => 'Blue (Dark Mode)',
+        'green' => 'Green Dark',
+        'green-dark' => 'Green (Dark Mode)',
+        'red' => 'Red Dark',
+        'red-dark' => 'Red (Dark Mode)',
+        'orange' => 'Orange Dark',
+        'orange-dark' => 'Orange (Dark Mode)',
+        'black' => 'Black',
+        'black-dark' => 'Black (Dark Mode)',
+        'purple' => 'Purple',
+        'purple-dark' => 'Purple (Dark Mode)',
+        'yellow' => 'Yellow',
+        'yellow-dark' => 'Yellow (Dark Mode)',
+        'contrast' => 'High Contrast',
+    );
+
+    $select = '<select name="'.$name.'" class="'.$class.'" style="width: 250px">';
+    foreach ($formats as $format => $label) {
+        $select .= '<option value="'.$format.'"'.($selected == $format ? ' selected="selected"' : '').'>'.$label.'</option> '."\n";
     }
 
     $select .= '</select>';

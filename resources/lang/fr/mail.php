@@ -69,5 +69,11 @@ return array(
     'welcome' => 'Bienvenue, :name',
     'welcome_to' => 'Bienvenue sur :web!',
     'your_credentials' => 'Vos identifiants Snipe-IT',
-
+    'Accessory_Checkin_Notification' => 'Accessoire enregistré',
+    'Asset_Checkin_Notification' => 'Matériel enregistré',
+    'License_Checkin_Notification' => 'Licence enregistrée',
+    'Expected_Checkin_Report' => 'Rapport de vérification de matériel attendu',
+    'Expected_Checkin_Notification' => 'Rappel : la date limite de vérification de :name approche',
+    'Expected_Checkin_Date' => 'Un matériel que vous avez emprunté doit être vérifié à nouveau le :date',
+    'your_assets' => 'Voir vos matériels'
 );

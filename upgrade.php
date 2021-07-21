@@ -1,10 +1,10 @@
 <?php
 (PHP_SAPI !== 'cli' || isset($_SERVER['HTTP_USER_AGENT'])) && die('Access denied.');
 
-$required_version = '7.2.0';
+$required_version = '7.2.5';
 
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-	echo "Skipping user check as it is not supported on Windows\n";
+if ((strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') || (!function_exists('posix_getpwuid'))) {
+	echo "Skipping user check as it is not supported on Windows or Posix is not installed on this server. \n";
 } else {
 	$pwu_data = posix_getpwuid(posix_geteuid());
 	$username = $pwu_data['name'];
@@ -110,15 +110,16 @@ foreach ($required_exts_array as $required_ext) {
 
 // Print out a useful error message and abort the install
 if ($ext_missing!='') {
-    echo "--------------------- !! ERROR !! ----------------------\n";
-    echo $ext_missing;
-    echo "--------------------------------------------------------\n\n";
-    echo "You have the following extensions installed: \n\n";
+    echo "--------------------------------------------------------\n";
+    echo "You have the following extensions installed: \n";
+    echo "--------------------------------------------------------\n";
 
     foreach ($loaded_exts_array as $loaded_ext) {
        echo "- ".$loaded_ext."\n";
     }
 
+    echo "--------------------- !! ERROR !! ----------------------\n";
+    echo $ext_missing;
     echo "------------------------- :( ---------------------------\n";
     echo "ABORTING THE INSTALLER  \n";
     echo "Please install the extensions above and re-run this script.\n";
@@ -129,30 +130,6 @@ if ($ext_missing!='') {
 
 }
 
-$ext_check = '';
-if ((!extension_loaded('gd')) || (!extension_loaded('imagick'))) {
-    $ext_check .= "PHP extension MISSING: gd or imagick \n";
-}
-
-if (!extension_loaded('php-ldap'))  {
-    $ext_check .= "PHP extension MISSING: php-ldap \n";
-}
-
-if (!extension_loaded('php-json'))  {
-    $ext_check .= "PHP extension MISSING: php-json \n";
-}
-
-if (!extension_loaded('php-fileinfo'))  {
-    $ext_check .= "PHP extension MISSING: php-fileinfo \n";
-}
-
-if (!extension_loaded('php-openssl'))  {
-    $ext_check .= "PHP extension MISSING: php-openssl \n";
-}
-
-if ($ext_check!='') {
-    echo $ext_check;
-}
 
 echo "--------------------------------------------------------\n";
 echo "STEP 2: Backing up database: \n";

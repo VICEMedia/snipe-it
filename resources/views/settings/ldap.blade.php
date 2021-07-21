@@ -317,6 +317,9 @@
                             </div>
                             <div class="col-md-9">
                                 {{ Form::text('ldap_active_flag', Request::old('ldap_active_flag', $setting->ldap_active_flag), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
+
+                                <p class="help-block">{{ trans('admin/settings/general.ldap_activated_flag_help') }}</p>
+
                                 {!! $errors->first('ldap_active_flag', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 @if (config('app.lock_passwords')===true)
                                     <p class="text-warning"><i class="fa fa-lock" aria-hidden="true"></i> {{ trans('general.feature_disabled') }}</p>
@@ -330,8 +333,21 @@
                                 {{ Form::label('ldap_emp_num', trans('admin/settings/general.ldap_emp_num')) }}
                             </div>
                             <div class="col-md-9">
-                                {{ Form::text('ldap_emp_num', Request::old('ldap_emp_num', $setting->ldap_emp_num), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
+                                {{ Form::text('ldap_emp_num', Request::old('ldap_emp_num', $setting->ldap_emp_num), ['class' => 'form-control','placeholder' => 'employeenumber/employeeid', $setting->demoMode]) }}
                                 {!! $errors->first('ldap_emp_num', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                @if (config('app.lock_passwords')===true)
+                                    <p class="text-warning"><i class="fa fa-lock" aria-hidden="true"></i> {{ trans('general.feature_disabled') }}</p>
+                                @endif
+                            </div>
+                        </div>
+                        <!-- LDAP department -->
+                        <div class="form-group {{ $errors->has('ldap_dept') ? 'error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('ldap_dept', trans('admin/settings/general.ldap_dept')) }}
+                            </div>
+                            <div class="col-md-9">
+                                {{ Form::text('ldap_dept', Request::old('ldap_dept', $setting->ldap_dept), ['class' => 'form-control','placeholder' => 'department', $setting->demoMode]) }}
+                                {!! $errors->first('ldap_dept', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 @if (config('app.lock_passwords')===true)
                                     <p class="text-warning"><i class="fa fa-lock" aria-hidden="true"></i> {{ trans('general.feature_disabled') }}</p>
                                 @endif
@@ -344,7 +360,7 @@
                                 {{ Form::label('ldap_email', trans('admin/settings/general.ldap_email')) }}
                             </div>
                             <div class="col-md-9">
-                                {{ Form::text('ldap_email', Request::old('ldap_email', $setting->ldap_email), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
+                                {{ Form::text('ldap_email', Request::old('ldap_email', $setting->ldap_email), ['class' => 'form-control','placeholder' => 'mail', $setting->demoMode]) }}
                                 {!! $errors->first('ldap_email', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 @if (config('app.lock_passwords')===true)
                                     <p class="text-warning"><i class="fa fa-lock" aria-hidden="true"></i> {{ trans('general.feature_disabled') }}</p>
@@ -352,7 +368,47 @@
                             </div>
                         </div>
 
+                        <!-- LDAP Phone -->
+                        <div class="form-group {{ $errors->has('ldap_phone') ? 'error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('ldap_phone', trans('admin/settings/general.ldap_phone')) }}
+                            </div>
+                            <div class="col-md-9">
+                                {{ Form::text('ldap_phone', Request::old('ldap_phone', $setting->ldap_phone_field), ['class' => 'form-control','placeholder' => 'telephonenumber', $setting->demoMode]) }}
+                                {!! $errors->first('ldap_phone', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                @if (config('app.lock_passwords')===true)
+                                    <p class="text-warning"><i class="fa fa-lock" aria-hidden="true"></i> {{ trans('general.feature_disabled') }}</p>
+                                @endif
+                            </div>
+                        </div>
 
+                        <!-- LDAP Job title -->
+                        <div class="form-group {{ $errors->has('ldap_jobtitle') ? 'error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('ldap_jobtitle', trans('admin/settings/general.ldap_jobtitle')) }}
+                            </div>
+                            <div class="col-md-9">
+                                {{ Form::text('ldap_jobtitle', Request::old('ldap_jobtitle', $setting->ldap_jobtitle), ['class' => 'form-control','placeholder' => 'title', $setting->demoMode]) }}
+                                {!! $errors->first('ldap_jobtitle', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                @if (config('app.lock_passwords')===true)
+                                    <p class="text-warning"><i class="fa fa-lock" aria-hidden="true"></i> {{ trans('general.feature_disabled') }}</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- LDAP Country -->
+                        <div class="form-group {{ $errors->has('ldap_country') ? 'error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('ldap_country', trans('admin/settings/general.ldap_country')) }}
+                            </div>
+                            <div class="col-md-9">
+                                {{ Form::text('ldap_country', Request::old('ldap_country', $setting->ldap_country), ['class' => 'form-control','placeholder' => 'c', $setting->demoMode]) }}
+                                {!! $errors->first('ldap_country', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                @if (config('app.lock_passwords')===true)
+                                    <p class="text-warning"><i class="fa fa-lock" aria-hidden="true"></i> {{ trans('general.feature_disabled') }}</p>
+                                @endif
+                            </div>
+                        </div>
                         @if ($setting->ldap_enabled)
 
                             <!-- LDAP test -->
@@ -361,7 +417,7 @@
                                     {{ Form::label('test_ldap_sync', 'Test LDAP Sync') }}
                                 </div>
                                 <div class="col-md-9" id="ldaptestrow">
-                                    <a {{ $setting->demoMode }} class="btn btn-default btn-sm pull-left" id="ldaptest" style="margin-right: 10px;">Test LDAP Syncronization</a>
+                                    <a {{ $setting->demoMode }} class="btn btn-default btn-sm pull-left" id="ldaptest" style="margin-right: 10px;">Test LDAP Synchronization</a>
                                 </div>
                                 <div class="col-md-9 col-md-offset-3">
                                     <br />
@@ -375,6 +431,38 @@
                                 </div>
 
                             </div>
+
+                            <!-- LDAP Login test -->
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    {{ Form::label('test_ldap_login', 'Test LDAP Login') }}
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                    <div class="col-md-4">
+                                        <input type="text" name="ldaptest_user" id="ldaptest_user"  class="form-control" placeholder="LDAP username">
+                                    </div>
+                                    <div class="col-md-4">
+                                    <input type="password" name="ldaptest_password" id="ldaptest_password" class="form-control" placeholder="LDAP password">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a class="btn btn-default btn-sm" id="ldaptestlogin" style="margin-right: 10px;">Test LDAP</a>
+                                    </div>
+
+
+                                </div>
+                                </div>
+                                <div class="col-md-9 col-md-offset-3">
+                                    <span id="ldaptestloginicon"></span>
+                                    <span id="ldaptestloginresult"></span>
+                                    <span id="ldaptestloginstatus"></span>
+                                </div>
+                                <div class="col-md-9 col-md-offset-3">
+                                    <p class="help-block">{{ trans('admin/settings/general.ldap_login_test_help') }}</p>
+                                </div>
+
+                        </div>
+
 
                        @endif
 
@@ -524,5 +612,76 @@
             body += "</tbody>"
             return body;
         }
+
+        $("#ldaptestlogin").click(function(){
+            $("#ldaptestloginrow").removeClass('text-success');
+            $("#ldaptestloginrow").removeClass('text-danger');
+            $("#ldaptestloginstatus").removeClass('text-danger');
+            $("#ldaptestloginstatus").html('');
+            $("#ldaptestloginicon").html('<i class="fa fa-spinner spin"></i> Testing LDAP Authentication...');
+            $.ajax({
+                url: '{{ route('api.settings.ldaptestlogin') }}',
+                type: 'POST',
+                headers: {
+                    "X-Requested-With": 'XMLHttpRequest',
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    'ldaptest_user': $('#ldaptest_user').val(),
+                    'ldaptest_password': $('#ldaptest_password').val()
+                },
+
+                dataType: 'json',
+
+                success: function (data) {
+                    $("#ldaptestloginicon").html('');
+                    $("#ldaptestloginrow").addClass('text-success');
+                    $("#ldaptestloginstatus").addClass('text-success');
+                    $("#ldaptestloginstatus").html('<i class="fa fa-check text-success"></i> User authenticated against LDAP successfully!');
+                },
+
+                error: function (data) {
+
+                    if (data.responseJSON) {
+                        var errors = data.responseJSON.message;
+                    } else {
+                        var errors;
+                    }
+
+                    var error_text = '';
+
+                    $("#ldaptestloginicon").html('');
+                    $("#ldaptestloginstatus").addClass('text-danger');
+                    $("#ldaptestloginicon").html('<i class="fa fa-exclamation-triangle text-danger"></i>');
+
+                    if (data.status == 500) {
+                        $('#ldaptestloginstatus').html('500 Server Error');
+                    } else if (data.status == 400) {
+
+                        if (typeof errors !='string') {
+
+                            for (i = 0; i < errors.length; i++) {
+                                if (errors[i]) {
+                                    error_text += '<li>Error: ' + errors[i];
+                                }
+
+                            }
+
+                        } else {
+                            error_text = errors;
+                        }
+
+                        $('#ldaptestloginstatus').html(error_text);
+
+                    } else {
+                        $('#ldaptestloginstatus').html(data.responseText.message);
+                    }
+                }
+
+
+
+
+            });
+        });
     </script>
 @endpush

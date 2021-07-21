@@ -722,23 +722,38 @@
                                             {{ ($asset->userRequests) ? (int) $asset->userRequests->count() : '0' }}
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <strong>
+                                               Labels
+                                            </strong>
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ Form::open([
+                                                      'method' => 'POST',
+                                                      'route' => ['hardware/bulkedit'],
+                                                      'class' => 'form-inline',
+                                                       'id' => 'bulkForm']) }}
+                                                <input type="hidden" name="bulk_actions" value="labels" />
+                                                <input type="hidden" name="ids[{{$asset->id}}]" value="{{ $asset->id }}" />
+                                                <button class="btn btn-sm btn-default" id="bulkEdit" ><i class="fa fa-barcode" aria-hidden="true"></i> {{ trans_choice('button.generate_labels', 1) }}</button>
 
+                                            {{ Form::close() }}
+
+                                        </div>
+                                    </div>
                                 </div> <!-- end row-striped -->
 
                             </div><!-- /col-md-8 -->
 
                             <div class="col-md-4">
 
-                                @if ($asset->image)
+                                @if (($asset->image) || (($asset->model) && ($asset->model->image!='')))
+
+
                                     <div class="col-md-12 text-center" style="padding-bottom: 15px;">
-                                        <a href="{{ url('/') }}/uploads/assets/{{ $asset->image }}" data-toggle="lightbox">
-                                            <img src="{{ url('/') }}/uploads/assets/{{{ $asset->image }}}" class="assetimg img-responsive" alt="{{ $asset->getDisplayNameAttribute() }}">
-                                        </a>
-                                    </div>
-                                @elseif (($asset->model) && ($asset->model->image!=''))
-                                    <div class="col-md-12 text-center" style="padding-bottom: 15px;">
-                                        <a href="{{ url('/') }}/uploads/models/{{ $asset->model->image }}" data-toggle="lightbox">
-                                            <img src="{{ url('/') }}/uploads/models/{{ $asset->model->image }}" class="assetimg img-responsive" alt="{{ $asset->getDisplayNameAttribute() }}">
+                                        <a href="{{ ($asset->getImageUrl()) ? $asset->getImageUrl() : null }}" data-toggle="lightbox">
+                                            <img src="{{ ($asset->getImageUrl()) ? $asset->getImageUrl() : null }}" class="assetimg img-responsive" alt="{{ $asset->getDisplayNameAttribute() }}">
                                         </a>
                                     </div>
                                 @endif
@@ -859,9 +874,8 @@
                                                         <a href="{{ route('components.show', $component->id) }}">{{ $component->name }}</a>
                                                     </td>
                                                     <td>{{ $component->pivot->assigned_qty }}</td>
-                                                    <td>{{ $component->purchase_cost }}</td>
-                                                    <?php $totalCost = $totalCost + $component->purchase_cost ;?>
-
+                                                    <td>{{ $component->purchase_cost }} each</td>
+                                                    <?php $totalCost = $totalCost + ($component->purchase_cost *$component->pivot->assigned_qty) ?>
                                                 </tr>
                                             @endif
                                         @endforeach
@@ -977,7 +991,8 @@
                            "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                          }'
                                         data-url="{{ route('api.maintenances.index', array('asset_id' => $asset->id)) }}"
-                                        data-cookie-id-table="assetMaintenancesTable">
+                                        data-cookie-id-table="assetMaintenancesTable"
+                                        data-cookie="true">
                                 </table>
                             </div> <!-- /.col-md-12 -->
                         </div> <!-- /.row -->
@@ -1005,7 +1020,8 @@
                        }'
 
                       data-url="{{ route('api.activity.index', ['item_id' => $asset->id, 'item_type' => 'asset']) }}"
-                      data-cookie-id-table="assetHistory">
+                      data-cookie-id-table="assetHistory"
+                      data-cookie="true">
                 <thead>
                 <tr>
                   <th data-visible="true" style="width: 40px;" class="hidden-xs">Icon</th>

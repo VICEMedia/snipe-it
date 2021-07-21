@@ -21,6 +21,7 @@ use Image;
 use Input;
 use Redirect;
 use Response;
+use App\Helpers\StorageHelper;
 
 /**
  * This controller handles all actions related to Settings for
@@ -399,6 +400,7 @@ class SettingsController extends Controller
         $setting->version_footer     = $request->input('version_footer');
         $setting->footer_text        = $request->input('footer_text');
         $setting->skin               = $request->input('skin');
+        $setting->allow_user_skin    = $request->input('allow_user_skin');
         $setting->show_url_in_emails = $request->input('show_url_in_emails', '0');
         $setting->logo_print_assets  = $request->input('logo_print_assets', '0');
 
@@ -577,6 +579,7 @@ class SettingsController extends Controller
         $setting->default_currency    = $request->input('default_currency', '$');
         $setting->date_display_format = $request->input('date_display_format');
         $setting->time_display_format = $request->input('time_display_format');
+        $setting->digit_separator = $request->input('digit_separator');
 
         if ($setting->save()) {
             return redirect()->route('settings.index')
@@ -940,6 +943,10 @@ class SettingsController extends Controller
             $setting->ldap_tls               = $request->input('ldap_tls', '0');
             $setting->ldap_pw_sync           = $request->input('ldap_pw_sync', '0');
             $setting->custom_forgot_pass_url = $request->input('custom_forgot_pass_url');
+            $setting->ldap_phone_field       = $request->input('ldap_phone');
+            $setting->ldap_jobtitle          = $request->input('ldap_jobtitle');
+            $setting->ldap_country           = $request->input('ldap_country');
+            $setting->ldap_dept              = $request->input('ldap_dept');
 
         }
 
@@ -991,6 +998,11 @@ class SettingsController extends Controller
             $setting->saml_sp_x509cert          = $request->input('saml_sp_x509cert');
             $setting->saml_sp_privatekey        = $request->input('saml_sp_privatekey');
         }
+        if (!empty($request->input('saml_sp_x509certNew'))) {
+            $setting->saml_sp_x509certNew       = $request->input('saml_sp_x509certNew');
+        } else {
+            $setting->saml_sp_x509certNew       = "";
+        }
         $setting->saml_custom_settings          = $request->input('saml_custom_settings');
 
         if ($setting->save()) {
@@ -1015,7 +1027,7 @@ class SettingsController extends Controller
 
         $path         = 'app/backups';
         $backup_files = Storage::files($path);
-        $files        = [];
+        $files_raw        = [];
 
         if (count($backup_files) > 0) {
             for ($f = 0; $f < count($backup_files); ++$f) {
@@ -1023,7 +1035,7 @@ class SettingsController extends Controller
                 // Skip dotfiles like .gitignore and .DS_STORE
                 if ((substr(basename($backup_files[$f]), 0, 1) != '.')) {
 
-                    $files[] = [
+                    $files_raw[] = [
                         'filename' => basename($backup_files[$f]),
                         'filesize' => Setting::fileSizeConvert(Storage::size($backup_files[$f])),
                         'modified' => Storage::lastModified($backup_files[$f]),
@@ -1034,6 +1046,9 @@ class SettingsController extends Controller
 
             }
         }
+
+        // Reverse the array so it lists oldest first
+        $files = array_reverse($files_raw);
 
         return view('settings/backups', compact('path', 'files'));
     }
@@ -1087,7 +1102,7 @@ class SettingsController extends Controller
 
         if (! config('app.lock_passwords')) {
             if (Storage::exists($path . '/' . $filename)) {
-                return Storage::download($path . '/' . $filename);
+                return StorageHelper::downloader($path . '/' . $filename);
             } else {
                 // Redirect to the backup page
                 return redirect()->route('settings.backups.index')->with('error', trans('admin/settings/message.backup.file_not_found'));
@@ -1138,6 +1153,7 @@ class SettingsController extends Controller
      */
     public function getPurge()
     {
+        \Log::warning('User ID '.Auth::user()->id.' is attempting a PURGE');
         return view('settings.purge-form');
     }
 
@@ -1154,6 +1170,8 @@ class SettingsController extends Controller
     {
         if (! config('app.lock_passwords')) {
             if ('DELETE' == $request->input('confirm_purge')) {
+
+                \Log::warning('User ID '.Auth::user()->id.' initiated a PURGE!');
                 // Run a backup immediately before processing
                 Artisan::call('backup:run');
                 Artisan::call('snipeit:purge', ['--force' => 'true', '--no-interaction' => true]);

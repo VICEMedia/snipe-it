@@ -1,6 +1,7 @@
 <template>
-
-    <div v-show="processDetail" class="col-md-6 col-md-offset-3">
+  <tr v-show="processDetail">
+    <td colspan="5">
+    <div class="col-md-12">
 
             <div class="row">
                 <div class="dynamic-form-row">
@@ -20,7 +21,7 @@
                         <label for="import-update">Update Existing Values?:</label>
                     </div>
                     <div class="col-md-7 col-xs-12">
-                        <input type="checkbox" class="minimal" name="import-update" v-model="options.update">
+                        <input type="checkbox" class="iCheck minimal" name="import-update" v-model="options.update">
                     </div>
                 </div><!-- /dynamic-form-row -->
 
@@ -50,8 +51,7 @@
         </div> <!-- /div row -->
 
         <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8" style="padding-top: 30px;">
+            <div class="col-md-12" style="padding-top: 30px;">
                 <div class="col-md-4 text-right"><h4>Header Field</h4></div>
                 <div class="col-md-4"><h4>Import Field</h4></div>
                 <div class="col-md-4"><h4>Sample Value</h4></div>
@@ -60,8 +60,7 @@
 
         <template v-for="(header, index) in file.header_row">
             <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="col-md-4 text-right">
                         <label :for="header" class="control-label">{{ header }}</label>
                     </div>
@@ -96,6 +95,8 @@
 
     </div><!-- /div v-show -->
 
+    </td>
+  </tr>
 </template>
 
 <script>
@@ -299,7 +300,7 @@
             }
         },
         components: {
-            select2: require('../select2.vue')
+            select2: require('../select2.vue').default
         }
     }
 </script>
