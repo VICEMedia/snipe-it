@@ -1,4 +1,4 @@
-name: Psalm Static analysis
+name: Psalm-SAST
 
 on: [push, pull_request]
 
